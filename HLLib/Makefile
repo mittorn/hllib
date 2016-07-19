@@ -1,7 +1,8 @@
 CXX		=	g++
-HLLIB_VERS	=	2.3.0
+HLLIB_VERS	=	2.4.5
 LDFLAGS		=	-shared -Wl,-soname,libhl.so.2
 CXXFLAGS	=	-O2 -g -fpic -funroll-loops -fvisibility=hidden
+CFLAGS		=	-O2 -g -funroll-loops -fvisibility=hidden
 PREFIX		=	/usr/local
 sources		=	BSPFile.cpp Checksum.cpp DebugMemory.cpp DirectoryFile.cpp \
 			DirectoryFolder.cpp DirectoryItem.cpp Error.cpp FileMapping.cpp \
@@ -15,17 +16,28 @@ objs		=	$(sources:.cpp=.o)
 .cpp.o:
 	$(CXX) -c $(CXXFLAGS) -o $@ $<
 
-all: libhl.so.$(HLLIB_VERS)
+all: libhl.so.$(HLLIB_VERS) ../HLExtract/HLExtract
 
 clean:
-	rm -f \#* *~ *.o *.so.*
+	rm -f \#* *~ *.o *.so.* ../HLExtract/HLExtract
 
-install: libhl.so.$(HLLIB_VERS)
-	install -g root -m 0755 -o root -d $(PREFIX)/lib $(PREFIX)/include
-	install -g root -m 0644 -o root libhl.so.$(HLLIB_VERS) $(PREFIX)/lib
-	install -g root -m 0644 -o root ../lib/HLLib.h $(PREFIX)/include/hl.h
-	ln -fs $(PREFIX)/lib/libhl.so.$(HLLIB_VERS) $(PREFIX)/lib/libhl.so.2
-	ln -fs $(PREFIX)/lib/libhl.so.$(HLLIB_VERS) $(PREFIX)/lib/libhl.so
+install: libhl.so.$(HLLIB_VERS) ../HLExtract/HLExtract
+	install -m 0755 -d $(PREFIX)/lib $(PREFIX)/include $(PREFIX)/bin
+	install -m 0644 libhl.so.$(HLLIB_VERS) $(PREFIX)/lib
+	install -m 0644 ../include/HLLib.h $(PREFIX)/include/HLLib.h
+	install -m 0755 ../HLExtract/HLExtract $(PREFIX)/bin/HLExtract
+	
+	ln -fs libhl.so.$(HLLIB_VERS) $(PREFIX)/lib/libhl.so.2
+	ln -fs libhl.so.$(HLLIB_VERS) $(PREFIX)/lib/libhl.so
+	ln -fs HLLib.h $(PREFIX)/include/hl.h
+
 
 libhl.so.$(HLLIB_VERS): $(objs)
 	$(CXX) $(LDFLAGS) -o $@ $(objs)
+	ln -fs libhl.so.$(HLLIB_VERS) libhl.so.2
+	ln -fs libhl.so.$(HLLIB_VERS) libhl.so
+
+../HLExtract/HLExtract: ../HLExtract/Main.c
+	$(CC) $(CFLAGS) -o $@ -I../include ../HLExtract/Main.c libhl.so.$(HLLIB_VERS)
+
+

@@ -14,7 +14,6 @@
  */
 
 #ifdef _WIN32
-#	include "..\lib\HLLib.h"
 #	ifdef _MSC_VER
 #		ifdef _DEBUG
 #			ifdef _WIN64
@@ -30,10 +29,9 @@
 #			endif
 #		endif
 #	endif
-#else
-#	include <hl.h>
 #endif
 
+#include "../include/HLLib.h"
 #if _MSC_VER
 #	define _CRT_SECURE_NO_WARNINGS
 #	define _CRT_NONSTDC_NO_DEPRECATE
