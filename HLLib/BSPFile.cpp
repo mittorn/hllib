@@ -61,7 +61,7 @@ hlBool CBSPFile::MapDataStructures()
 	}
 	this->pHeader = static_cast<const BSPHeader *>(this->pHeaderView->GetView());
 
-	if(this->pHeader->uiVersion != 30)
+	if(this->pHeader->uiVersion != 30 && this->pHeader->uiVersion != 29)
 	{
 		LastError.SetErrorMessageFormated("Invalid BSP version (v%u): you have a version of a BSP file that HLLib does not know how to read. Check for product updates.", this->pHeader->uiVersion);
 		return hlFalse;
